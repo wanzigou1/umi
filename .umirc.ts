@@ -9,6 +9,12 @@ export default defineConfig({
   layout: {
     title: '@umijs/max1',
   },
+  proxy: {
+    '/api': {
+      target: 'https://api.yucoder.cn',
+      changeOrigin: true,
+    },
+  },
   routes: [
     {
       path: '/',
