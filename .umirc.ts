@@ -17,7 +17,7 @@ export default defineConfig({
   initialState: {},
   request: {},
   layout: {
-    title: '@umijs/max',
+    title: 'max',
   },
   proxy: {
     '/api': {
@@ -29,6 +29,11 @@ export default defineConfig({
     {
       path: '/',
       redirect: '/home',
+    },
+    {
+      name: '热榜',
+      path: '/hotList',
+      component: './HotList',
     },
     {
       name: '首页',
@@ -44,11 +49,6 @@ export default defineConfig({
       name: ' CRUD 示例',
       path: '/table',
       component: './Table',
-    },
-    {
-      name: '热榜',
-      path: '/hotList',
-      component: './HotList',
     },
   ],
   npmClient: 'pnpm',
