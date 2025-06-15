@@ -28,17 +28,12 @@ export default defineConfig({
   routes: [
     {
       path: '/',
-      redirect: '/home',
+      redirect: '/HotList',
     },
     {
       name: '热榜',
       path: '/hotList',
       component: './HotList',
-    },
-    {
-      name: '首页',
-      path: '/home',
-      component: './Home',
     },
     {
       name: '权限演示',

@@ -6,7 +6,7 @@ type CustomTreeNode = TreeDataNode & {
 };
 type PropsType = {
   initialData: CustomTreeNode[];
-  updateTreeData: (data: any) => void;
+  updateTreeData: (data: TreeDataNode[]) => void;
 };
 
 const HotTree: React.FC<PropsType> = ({ initialData, updateTreeData }) => {
@@ -33,8 +33,15 @@ const HotTree: React.FC<PropsType> = ({ initialData, updateTreeData }) => {
     setTreeData(newData);
     updateTreeData(newData);
   };
-  const onCheck: TreeProps['onCheck'] = (checkedKeysValue) => {
-    updateTreeData(checkedKeysValue);
+  const onCheck: TreeProps['onCheck'] = (checkedKeysValue: any) => {
+    const temp = treeData.map((item) => {
+      return {
+        ...item,
+        isShow: checkedKeysValue.includes(item.key),
+      };
+    });
+    setTreeData(temp);
+    updateTreeData(temp);
   };
 
   return (

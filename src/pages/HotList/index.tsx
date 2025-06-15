@@ -2,7 +2,7 @@ import { getHotList } from '@/services/hot';
 import { SettingOutlined } from '@ant-design/icons';
 import { useRequest } from '@umijs/max';
 import { Button, Card, Col, Modal, Row, Skeleton } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import HotCard from './components/HotCard';
 import HotTree from './components/HotTree';
 
@@ -12,20 +12,26 @@ type Props = {
   isShow: boolean;
 };
 const HotList: React.FC = () => {
-  const { data, loading } = useRequest(getHotList);
+  const { data, loading, mutate } = useRequest(getHotList);
   const [filterData, setFilterData] = useState<Props[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [sortData, setSortData] = useState([]);
+  const [sortData, setSortData] = useState<Props[]>([]);
+  const originDataRef = useRef<any[]>([]);
+  const hasInitRef = useRef(false);
   useEffect(() => {
-    const temp =
-      data?.map((item) => {
-        return {
-          title: item.name,
-          key: item.id,
-          isShow: true,
-        };
-      }) || [];
-    setFilterData(temp);
+    if (data && !hasInitRef.current) {
+      hasInitRef.current = true; // 标记只初始化一次
+      originDataRef.current = JSON.parse(JSON.stringify(data));
+      const temp =
+        data?.map((item) => {
+          return {
+            title: item.name,
+            key: item.id,
+            isShow: true,
+          };
+        }) || [];
+      setFilterData(temp);
+    }
   }, [data]);
   const showModal = () => {
     setIsModalOpen(true);
@@ -33,7 +39,17 @@ const HotList: React.FC = () => {
 
   const handleOk = () => {
     setIsModalOpen(false);
-    console.log(sortData);
+    setFilterData(sortData);
+    const temp = sortData
+      .map((item) => {
+        return {
+          ...originDataRef.current?.find(
+            (cur) => cur.id === item.key && item.isShow,
+          ),
+        };
+      })
+      .filter((item) => item.id);
+    mutate(temp);
   };
 
   const handleCancel = () => {
@@ -80,6 +96,7 @@ const HotList: React.FC = () => {
         ))}
       </Row>
       <Modal
+        destroyOnHidden={true}
         title="配置热榜"
         closable={{ 'aria-label': 'Custom Close Button' }}
         open={isModalOpen}
